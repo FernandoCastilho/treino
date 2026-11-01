@@ -2599,4 +2599,8 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'เฉพาะโทรศัพท์เครื่องนี้ หน้าจอโฮมบางแบบต้องใช้เวลาสักครู่ถึงจะเปลี่ยน',
   'The icon could not be changed.': 'เปลี่ยนไอคอนไม่ได้',
   'Try the Halloween app icon': 'ลองไอคอนแอปฮาโลวีน',
+  'Home: Beginner Calisthenics': 'Home: Beginner Calisthenics',
+  'Three full-body days with no equipment, just your body weight.': 'Three full-body days with no equipment, just your body weight.',
+  'Home: Calisthenics': 'Home: Calisthenics',
+  'Four days of push, legs, pull and core, with no weights.': 'Four days of push, legs, pull and core, with no weights.',
 }

@@ -2592,4 +2592,8 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Только для этого телефона. Некоторым рабочим столам нужна минутка, чтобы заметить.',
   'The icon could not be changed.': 'Не удалось сменить значок.',
   'Try the Halloween app icon': 'Попробуй хеллоуинский значок приложения',
+  'Home: Beginner Calisthenics': 'Home: Beginner Calisthenics',
+  'Three full-body days with no equipment, just your body weight.': 'Three full-body days with no equipment, just your body weight.',
+  'Home: Calisthenics': 'Home: Calisthenics',
+  'Four days of push, legs, pull and core, with no weights.': 'Four days of push, legs, pull and core, with no weights.',
 }

@@ -108,7 +108,7 @@ function PlateBadge({ S, entry, set }) {
 }
 
 export default function FocusView({
-  entryIdx, unit, onToggle, onToggleSide, onField, onMutateSet, onStartTimed,
+  entryIdx, unit, onToggle, onToggleSide, onField, onMutateSet, onStartTimed, onStartStopwatch,
   onAddSet, onAddWarmup, onRemoveSetAt, onProgressionSettings, onSwap, onRemoveExercise,
   onNoProg, busy, onSelectEntry, onAdvanceUnit, onPairPrev, onPairNext, onUnpair, pointerEpoch,
 }) {
@@ -316,8 +316,12 @@ export default function FocusView({
             <strong>{t('{0}s hold', set.sec || entry.target?.sec || 45)}</strong>
             <Button icon="play" aria-label={t('Start set')} disabled={readOnly || busy}
               onClick={() => onStartTimed(setIdx, onProgress)}>{t('Start')}</Button>
-          </div> : <Stepper label={t('Reps')} ariaLabel="reps" value={set.r || 0} step={1} decimal={false} disabled={readOnly}
-            onChange={value => onField(setIdx, 'r', value)} />}</>}
+          </div> : <>
+            <Stepper label={t('Reps')} ariaLabel="reps" value={set.r || 0} step={1} decimal={false} disabled={readOnly}
+              onChange={value => onField(setIdx, 'r', value)} />
+            {onStartStopwatch && !set.done && <Button icon="play" aria-label={t('Start set')} disabled={readOnly || busy}
+              onClick={() => onStartStopwatch(setIdx, onProgress)}>{t('Start set')}</Button>}
+          </>}</>}
         </>}
         <div className="focus-extras">
           {drops.map((drop, index) => <div className="focus-extra" key={`drop-${index}`}>

@@ -107,7 +107,7 @@ const RTL_LETTER = /[֐-ࣿיִ-﷿ﹰ-﻿]/
 // enough to turn over, far shorter than the rest the set earns once both sides are held.
 const SWITCH_SIDES_SEC = 10
 
-function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSide, onField, onAddSet, onRemoveSet, onAddWarmup, onRemoveSetAt, onCopySetAt, onStartTimed, onPairPrev, onPairNext, onSetRowRef, onProgressionSettings, onRest, onNoProg, routineUpdate, onSwap, onSwapBackup, onMoveUp, onMoveDown, canMoveUp, canMoveDown, onRemoveExercise, busy }) {
+function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSide, onField, onAddSet, onRemoveSet, onAddWarmup, onRemoveSetAt, onCopySetAt, onStartTimed, onStartStopwatch, onPairPrev, onPairNext, onSetRowRef, onProgressionSettings, onRest, onNoProg, routineUpdate, onSwap, onSwapBackup, onMoveUp, onMoveDown, canMoveUp, canMoveDown, onRemoveExercise, busy }) {
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
   const working = useUI(s => s.work)
@@ -813,6 +813,11 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
         </div>
       })}
       <div style={{ height: 8 }} />
+      {/* Cronômetro da série: conta o tempo até você concluir; ao concluir, a série é marcada e o descanso começa. */}
+      {mode === 'reps' && !editing && onStartStopwatch && (() => {
+        const next = entry.sets.findIndex(s => !s.done)
+        return next >= 0 ? <div className="row" style={{ marginBottom: 8 }}><Button size="sm" variant="primary" icon="play" disabled={!!working} onClick={() => onStartStopwatch(next)}>{t('Start set')}</Button></div> : null
+      })()}
       {wc.setShortcuts ? <div className="row" style={{ flexWrap: 'wrap' }}>
         <Button size="sm" icon="sunrise" onClick={onAddWarmup}>{t('Add warm-up set')}</Button>
         <Button size="sm" icon="minus" disabled={entry.sets.length <= setSpanAt(entry.sets, entry.sets.length - 1)[1]} onClick={onRemoveSet}>{t('Remove set')}</Button>
@@ -1441,6 +1446,7 @@ function ActiveWorkout() {
     onRemoveSetAt: i => removeSetAt(idx, i),
     onCopySetAt: i => copyActiveSet(idx, i),
     onStartTimed: (i, onFocusProgress) => startTimed(idx, i, onFocusProgress),
+    onStartStopwatch: (i, onFocusProgress) => startStopwatch(idx, i, onFocusProgress),
     onProgressionSettings: editing ? null : () => openProgressionSettings(idx),
     onRest: editing ? null : () => openExerciseRest(idx),
     onNoProg: routineKeepsOut(A.entries[idx]) ? null : on => setNoProg(idx, on),
@@ -1732,6 +1738,25 @@ function ActiveWorkout() {
     useUI.getState().startWork(plan, exerciseNameText(exOr(e.id)), holdDone(owner, plan, onFocusProgress), { idx, i, id: e.id })
     // After startWork: a hold it displaced has already written its seconds to its own row.
     holdAt = { owner, idx, i }
+  }
+  // Cronômetro de uma série de repetições: conta para cima até "Concluído" e então marca a série como
+  // feita pelo caminho normal (descanso, superséries e fim do treino se comportam como sempre). Não grava
+  // tempo na série: `sec` é só das séries por tempo.
+  const startStopwatch = (idx, i, onFocusProgress) => {
+    if (editing) return
+    unlock(S.sound)
+    const e = A.entries[idx]
+    const owner = { idx, i }
+    useUI.getState().startWork(3600, exerciseNameText(exOr(e.id)), stopwatchDone(owner, onFocusProgress), null, { up: true })
+    holdAt = { owner, idx, i }
+  }
+  const stopwatchDone = (owner, onFocusProgress) => (_elapsed, { abandoned = false, chimed = false } = {}) => {
+    const { idx } = owner
+    const mine = holdAt?.owner === owner
+    const i = mine ? holdAt.i : owner.i
+    if (mine) holdAt = null
+    if (abandoned) return
+    if (!useStore.getState().S.active.entries[idx].sets[i].done) toggle(idx, i, undefined, { quiet: chimed, onFocusProgress })
   }
   // What a hold hands back to its row: on its end, its Done, or a rest displacing it. Also bound
   // again to a hold restored after a reload (useUI.bindWork, below).

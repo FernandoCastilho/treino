@@ -2588,4 +2588,8 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': '仅限这部手机。有些主屏幕要过一会儿才会跟上。',
   'The icon could not be changed.': '无法更换图标。',
   'Try the Halloween app icon': '试试万圣节应用图标',
+  'Home: Beginner Calisthenics': 'Home: Beginner Calisthenics',
+  'Three full-body days with no equipment, just your body weight.': 'Three full-body days with no equipment, just your body weight.',
+  'Home: Calisthenics': 'Home: Calisthenics',
+  'Four days of push, legs, pull and core, with no weights.': 'Four days of push, legs, pull and core, with no weights.',
 }

@@ -32,10 +32,11 @@ const APPROVED = {
 const shape = r => r.ex.map(e => [e.id, e.sets, e.reps])
 
 describe('starter plan catalog', () => {
-  it('offers exactly the four plans, with the day count read off the schedule', () => {
+  it('offers exactly the six plans, with the day count read off the schedule', () => {
     expect(starterPlanOptions()).toEqual([
       { id: 'ppl', days: 3 }, { id: 'upper-lower', days: 4 },
       { id: 'full-body', days: 3 }, { id: '5x5', days: 3 },
+      { id: 'home-beginner', days: 3 }, { id: 'home-calisthenics', days: 4 },
     ])
     for (const { id, days } of starterPlanOptions()) expect(starterPlanDays(id)).toHaveLength(days)
   })
@@ -186,4 +187,18 @@ describe('fitting a starter plan to equipment', () => {
     const have = new Set(fitted.routines.map(r => r.id))
     for (const { routineId } of fitted.schedule) expect(have.has(routineId)).toBe(true)
   })
+})
+
+describe('planos para fazer em casa', () => {
+  for (const id of ['home-beginner', 'home-calisthenics']) {
+    it(`${id}: só exercícios do app, sem equipamento (peso do corpo)`, () => {
+      const plan = buildStarterPlan(id)
+      expect(plan.routines.length).toBeGreaterThan(0)
+      for (const r of plan.routines) for (const e of r.ex) {
+        const ex = EXIDX[e.id]
+        expect(ex, `exercício ${e.id} não existe no app`).toBeTruthy()
+        expect(ex.eq, `${ex.n} precisa de equipamento`).toBe('body weight')
+      }
+    })
+  }
 })

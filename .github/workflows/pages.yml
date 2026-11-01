@@ -35,7 +35,7 @@ jobs:
       - name: Teste da tela de senha
         run: npx vitest run src/lib/gate.test.js
       - name: Build
-        run: npm run build
+        run: npm run build:pages
         env:
           # Hash da senha (variável do repositório, não é segredo: o hash vai no site de qualquer jeito).
           VITE_SENHA_HASH: ${{ vars.SENHA_HASH }}

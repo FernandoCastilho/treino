@@ -1670,6 +1670,10 @@ export const PT_BR_OVERRIDES = {
   'App icon': 'Ícone do app',
   'Just for this phone. Some home screens take a moment to catch up.': 'Só para este celular. Algumas telas iniciais demoram um pouco para perceber.',
   'Try the Halloween app icon': 'Experimente o ícone de Halloween do app',
+  'Home: Beginner Calisthenics': 'Em casa: Calistenia para iniciantes',
+  'Three full-body days with no equipment, just your body weight.': 'Três dias de corpo inteiro, sem equipamento, só com o peso do corpo.',
+  'Home: Calisthenics': 'Em casa: Calistenia',
+  'Four days of push, legs, pull and core, with no weights.': 'Quatro dias de empurrar, pernas, puxar e abdômen, sem pesos.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
