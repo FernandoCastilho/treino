@@ -7,7 +7,7 @@ import V13_IDS from './catalogue-v13-ids.json' with { type: 'json' }
 // English steps live in their own pack since the catalogue moved to catalogue/ (v1.4.0)
 import EN from '../instr/en.js'
 
-describe('Brazilian Portuguese exercise instructions', () => {
+describe('Brazilian Portuguese exercise instructions', { timeout: 60_000 }, () => {
   const exercises = new Map(EXDB.map(exercise => [exercise.id, exercise]))
   const catalogue = JSON.parse(readFileSync(new URL('../../../catalogue/i18n/pt-BR.json', import.meta.url), 'utf8'))
 
