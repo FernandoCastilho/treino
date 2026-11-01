@@ -57,6 +57,7 @@ import { pathBefore } from '../lib/nav.js'
 import WatchSettingsPage from './WatchSettings.jsx'
 import { reportSheet } from '../components/ReportSheet.jsx'
 import { csvExportSheet } from '../components/CsvExportSheet.jsx'
+import { planilhaSheet } from '../components/PlanilhaSheet.jsx'
 import GymReminderPage, { GymEditPage } from './GymReminder.jsx'
 import { readGymConfig } from '../lib/gym-reminder.js'
 import { THEMES, inSeason, seasonChoice, activeSeason } from '../lib/seasonal.js'
@@ -918,6 +919,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
         <Row icon="note" iconTint="var(--green)" title={t('Performance report (PDF)')} subtitle={t('Charts, totals and every workout of the last days or weeks.')} accessory="chevron" onClick={reportSheet} />
         {/* One row per set for spreadsheets and other apps (#647); our own importer reads it back. */}
         <Row icon="share" iconTint="var(--green)" title={t('Export as spreadsheet (CSV)')} subtitle={t('Workouts, body weight and measurements')} accessory="chevron" onClick={csvExportSheet} />
+        <Row icon="share" iconTint="var(--green)" title={t('Google Sheets spreadsheet')} subtitle={t('History on your own tab')} accessory="chevron" onClick={planilhaSheet} />
         {/* 14 is AUTO_BACKUP_KEEP in lib/mobile.js, written out because the Settings tests mock
             that module wholesale; mobile.autobackup.test.js pins the two together. */}
         {MOBILE && <Row icon="folder" iconTint="var(--blue)" title={t('Auto-backup on changes')}

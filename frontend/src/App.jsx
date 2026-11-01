@@ -3,6 +3,8 @@ import { hideBoot } from './lib/boot.js'
 import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation, useNavigationType } from 'react-router-dom'
 import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
+import { iniciarEnvioAutomatico } from './lib/planilha.js'
+import { t as tr } from './lib/i18n.js'
 import { bindUI } from './components/ui.jsx'
 import { setWeightDecimals } from './lib/format.js'
 import { accentValue, applyAccent } from './lib/accent.js'
@@ -114,6 +116,8 @@ function Shell() {
   // iOS: whether timer sounds get past the ring/silent switch (Settings → Sounds). Page-level,
   // so it is applied here on load and on change rather than at each beep.
   useEffect(() => { setPlayOnSilent(!!S.soundOnSilent) }, [S.soundOnSilent])
+  // Histórico na planilha do Drive (só age se a configuração existir neste aparelho).
+  useEffect(() => iniciarEnvioAutomatico(useStore, () => useUI.getState().toast?.(tr('Could not send to the spreadsheet'))), [])
   // Settings → Vibrate, the same way: one page-level switch rather than a check at each buzz.
   useEffect(() => { setVibrate(S.vibrate !== false) }, [S.vibrate])
   // Android app: "Vibrate when the phone is on silent" sends the end-of-rest buzz through the

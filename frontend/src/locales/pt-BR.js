@@ -1704,6 +1704,17 @@ export const PT_BR_OVERRIDES = {
   'Last 4 weeks: least trained {0}. Most trained {1}.': 'Últimas 4 semanas: menos treinado: {0}. Mais treinado: {1}.',
   'No workouts logged in the last 4 weeks yet, so the automatic option starts as a full-body workout.': 'Ainda não há treinos registrados nas últimas 4 semanas, então a opção automática começa com um treino de corpo inteiro.',
   'Quadriceps': 'Quadríceps',
+  'Google Sheets spreadsheet': 'Planilha do Google Sheets',
+  'History on your own tab': 'Histórico na sua aba',
+  'Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.': 'Envia o seu histórico de treinos para a planilha "treino", na sua aba. É reenviado sozinho depois de cada treino.',
+  'Script address': 'Endereço do script',
+  'Secret code': 'Código secreto',
+  'Tab (person name)': 'Aba (nome da pessoa)',
+  'Save and send now': 'Salvar e enviar agora',
+  'Leave the address empty to turn it off.': 'Deixe o endereço vazio para desligar.',
+  'History sent to the spreadsheet': 'Histórico enviado para a planilha',
+  'Could not send to the spreadsheet': 'Não foi possível enviar para a planilha',
+  'Turned off': 'Desligado',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
