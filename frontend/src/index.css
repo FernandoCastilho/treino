@@ -19,11 +19,11 @@
 /* ---------------------------------------------------------------- tokens -- */
 :root {
   /* surfaces — dark is the default */
-  --bg:        #000000;
-  --bg-el:     #0e0e10;   /* elevated backdrop (sheets, bars) */
-  --surface:   #1c1c1e;   /* card / grouped-list fill */
-  --surface-2: #2c2c2e;   /* pressed + nested fill */
-  --surface-3: #3a3a3c;   /* controls (segmented track, switch off) */
+  --bg:        #060d1f;
+  --bg-el:     #0a1430;   /* elevated backdrop (sheets, bars) */
+  --surface:   #101d3d;   /* card / grouped-list fill */
+  --surface-2: #182a52;   /* pressed + nested fill */
+  --surface-3: #223765;   /* controls (segmented track, switch off) */
 
   /* text */
   --label:     #ffffff;
@@ -42,8 +42,8 @@
   --purple:#bf5af2; --mint:#63e6e2; --brown:#ac8e68; --grey:#8e8e93;
 
   /* accent (per-account, synced) */
-  --acc:  var(--green);
-  --acc-2:#248a3d;
+  --acc:  var(--yellow);
+  --acc-2:#b25000;
   --on-acc:#000000;
   --acc-soft: color-mix(in srgb, var(--acc) 16%, transparent);
   --acc-line: color-mix(in srgb, var(--acc) 38%, transparent);

@@ -29,12 +29,12 @@ const lembrar = (config) => {
 function tela(config) {
   return new Promise((resolve) => {
     const raiz = document.createElement('div')
-    raiz.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px'
+    raiz.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#060d1f;color:#fff;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px'
     const caixa = document.createElement('form')
     caixa.style.cssText = 'width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;text-align:center'
     const titulo = document.createElement('h1')
-    titulo.textContent = 'Treino'
-    titulo.style.cssText = 'margin:0 0 4px;font-size:28px;color:#30d158'
+    titulo.textContent = 'FC Gym'
+    titulo.style.cssText = 'margin:0 0 4px;font-size:28px;color:#ffd60a'
     const aviso = document.createElement('p')
     aviso.style.cssText = 'margin:0;min-height:20px;font-size:14px;color:#aaa'
     caixa.append(titulo, aviso)
@@ -51,11 +51,11 @@ function tela(config) {
     campo.type = 'password'
     campo.autocomplete = 'current-password'
     campo.setAttribute('aria-label', 'Senha')
-    campo.style.cssText = 'font-size:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#111;color:#fff'
+    campo.style.cssText = 'font-size:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#101d3d;color:#fff'
     const botao = document.createElement('button')
     botao.type = 'submit'
     botao.textContent = 'Entrar'
-    botao.style.cssText = 'font-size:16px;padding:12px;border-radius:10px;border:0;background:#30d158;color:#000;font-weight:600'
+    botao.style.cssText = 'font-size:16px;padding:12px;border-radius:10px;border:0;background:#ffd60a;color:#000;font-weight:600'
     caixa.append(campo, botao)
     caixa.addEventListener('submit', async (e) => {
       e.preventDefault()

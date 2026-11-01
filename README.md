@@ -1,6 +1,6 @@
-# Treino
+# FC Gym
 
-App de treino da família, publicado em https://fernandocastilho.github.io/treino/ (GitHub Pages, sem servidor).
+FC Gym: app de treino da família (repositório `treino`), publicado em https://fernandocastilho.github.io/treino/ (GitHub Pages, sem servidor).
 
 - **Base:** [openGym](https://github.com/DuarteSantos8/openGym), de Duarte Santos, licença AGPL-3.0 (`LICENSE`, `NOTICE.md`). O código-fonte fica aberto neste repositório, como a licença exige.
 - **Uso:** "Continuar sem conta". Os dados ficam só no navegador de cada aparelho.

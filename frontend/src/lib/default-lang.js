@@ -35,9 +35,8 @@ export function matchLocale(tag) {
 /** The language a copy that never chose one should be in, or null for a copy that chose. */
 export function autoLang(S, config, navLangs = []) {
   if (!S || S.langAuto !== true) return null
-  return matchLocale(config?.default_lang)
-    || (navLangs || []).map(matchLocale).find(Boolean)
-    || 'pt-BR'
+  // FC Gym is Brazilian Portuguese first: the browser's language no longer picks the language.
+  return matchLocale(config?.default_lang) || 'pt-BR'
 }
 
 // The instance's DEFAULT_LANG as last seen on this device, so a boot does not show the browser's

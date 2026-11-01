@@ -1143,7 +1143,7 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go, entryKey }) {
             value={t('Admin')} accessory="chevron" onClick={() => nav('/admin', { state: { section: 'coach' } })} className="sp-root-row" />}
         </Section>
       ))}
-      <div className="dim small sp-version">openGym v{__APP_VERSION__}</div>
+      <div className="dim small sp-version">FC Gym · base openGym v{__APP_VERSION__}, de Duarte Santos (AGPL-3.0)</div>
     </>}
   </div>
 }
