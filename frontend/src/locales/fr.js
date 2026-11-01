@@ -491,6 +491,8 @@ export default {
   'full body': 'corps entier',
   'Finish': 'Terminer',
   'Start {0}': 'Commencer {0}',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'Mode invité : tes données ne vivent que dans ce navigateur.',
   'Keeps your data safe and separate per person.': 'Garde tes données en sécurité et séparées par personne.',
   'Strength': 'Force',

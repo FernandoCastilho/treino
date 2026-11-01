@@ -347,6 +347,8 @@ export default {
   'full body': 'الجسم كامل',
   'Finish': 'إنهاء',
   'Start {0}': 'بدء {0}',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'وضع الضيف: بياناتك تعيش في هذا المتصفح فقط.',
   'Keeps your data safe and separate per person.': 'يحافظ على بياناتك آمنة ومنفصلة لكل شخص.',
   'Strength': 'القوة',

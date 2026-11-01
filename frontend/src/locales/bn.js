@@ -527,6 +527,8 @@ export default {
   'full body': 'পুরো শরীর',
   'Finish': 'শেষ করুন',
   'Start {0}': '{0} শুরু করুন',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'গেস্ট মোড: আপনার ডেটা শুধু এই ব্রাউজারে থাকে।',
   'Keeps your data safe and separate per person.': 'আপনার ডেটা নিরাপদ এবং প্রত্যেকের জন্য আলাদা রাখে।',
   'Strength': 'শক্তি',

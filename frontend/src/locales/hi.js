@@ -491,6 +491,8 @@ export default {
   'full body': 'पूरा शरीर',
   'Finish': 'समाप्त',
   'Start {0}': '{0} शुरू करें',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'अतिथि मोड: आपका डेटा केवल इसी ब्राउज़र में रहता है।',
   'Keeps your data safe and separate per person.': 'आपका डेटा सुरक्षित और हर व्यक्ति के लिए अलग रखता है।',
   'Strength': 'शक्ति',

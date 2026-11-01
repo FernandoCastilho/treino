@@ -328,6 +328,8 @@ export default {
   'full body': 'усе тіло',
   'Finish': 'Завершити',
   'Start {0}': 'Почати {0}',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'Гостьовий режим: дані живуть лише в цьому браузері.',
   'Keeps your data safe and separate per person.': 'Зберігає твої дані безпечно й окремо для кожного.',
   'Strength': 'Сила',

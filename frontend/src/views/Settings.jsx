@@ -106,6 +106,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
   const nav = useNavigate()
   const S = useStore(s => s.S)
   const user = useStore(s => s.user)
+  const guest = useStore(s => s.isGuest?.())
   const sync = useStore(s => s.sync)
   const coachLocal = useStore(s => s.coachLocal)
   // Name-and-password sign-in, where the instance offers it (#118).
@@ -1056,6 +1057,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           <Row icon="lock" iconTint="var(--grey)" title={t('Passkeys not supported in this browser.')} />
           <KeptChangesRows />
         </>}
+        {/* A guest chose to skip the sign-in screen and had no way back to it. The copy on this device stays. */}
+        {!user && !MOBILE && !DEMO && guest && <Row icon="signOut" iconTint="var(--red)" title={t('Leave guest mode')} subtitle={t('Back to the start screen. Your data stays on this device.')} accessory="chevron" onClick={() => { useStore.getState().setGuest(false); nav('/home') }} />}
       </Section>}
       {/* Signed in or paired: the account can be deleted from here (App Store rule 5.1.1(v)). A
           phone in local-only mode has no account; "Reset everything" in Data & backup wipes it. */}

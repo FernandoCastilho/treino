@@ -494,6 +494,8 @@ export default {
   // --- data terms: equipment ---
   'Finish': 'เสร็จสิ้น',
   'Start {0}': 'เริ่ม {0}',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'โหมดผู้เยี่ยมชม: ข้อมูลของคุณอยู่ในเบราว์เซอร์นี้เท่านั้น',
   'Keeps your data safe and separate per person.': 'เก็บข้อมูลของคุณให้ปลอดภัยและแยกตามแต่ละคน',
   'Strength': 'ความแข็งแรง',

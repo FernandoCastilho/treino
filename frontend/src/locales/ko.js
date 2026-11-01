@@ -491,6 +491,8 @@ export default {
   'full body': '전신',
   'Finish': '마치기',
   'Start {0}': '{0} 시작',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': '게스트 모드: 데이터는 이 브라우저에만 저장됩니다.',
   'Keeps your data safe and separate per person.': '데이터를 안전하게, 사람별로 분리해 보관합니다.',
   'Strength': '근력',

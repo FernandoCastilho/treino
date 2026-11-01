@@ -486,6 +486,8 @@ export default {
   'full body': '全身',
   'Finish': '結束',
   'Start {0}': '開始 {0}',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': '訪客模式：你的資料只儲存在此瀏覽器中。',
   'Keeps your data safe and separate per person.': '確保資料安全，並依使用者各自獨立儲存。',
   'Strength': '肌力訓練',
