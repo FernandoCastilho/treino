@@ -1,4 +1,4 @@
-// Recebe o histórico do FC Gym e grava na aba da pessoa, na planilha "treino" (a que contém este script).
+// Recebe o histórico do FC Gym e grava na aba da pessoa, na planilha "treino" (aberta pelo código dela, pois o script é independente).
 // O código secreto fica em Configurações do projeto > Propriedades do script > TOKEN (nunca no código).
 const ABAS = ['Fernando', 'Iris', 'Bia']
 
@@ -10,7 +10,7 @@ function doPost(e) {
     if (ABAS.indexOf(d.aba) < 0) return resposta({ ok: false, erro: 'aba inválida' })
     const linhas = d.linhas
     if (!Array.isArray(linhas) || !linhas.length) return resposta({ ok: false, erro: 'sem dados' })
-    const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(d.aba)
+    const aba = SpreadsheetApp.openById('1f3vptgihjQTnszaY9f9dnwAYI96EhX9fa41BPsYN7Yg').getSheetByName(d.aba)
     if (!aba) return resposta({ ok: false, erro: 'aba não existe' })
     const largura = linhas[0].length
     aba.clearContents()
