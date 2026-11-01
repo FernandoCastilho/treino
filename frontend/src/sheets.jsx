@@ -12,6 +12,7 @@ import { beep, vibrate } from './lib/sound.js'
 import { t, tn, dateLocale, instrFor, instrTranslated, descFor, exerciseNameFor, exerciseNameClass, getLang, useLang } from './lib/i18n.js'
 import { nav, closeThenNav, navToWorkout } from './lib/nav.js'
 import { buildStarterPlan, starterPlanDays, starterPlanOptions } from './lib/starter.js'
+import { gerarTreino, gerarPlanoSemanal, resumo as resumoTreino, LOCAIS as G_LOCAIS, OBJETIVOS as G_OBJETIVOS, NIVEIS as G_NIVEIS, FOCOS as G_FOCOS, TEMPOS as G_TEMPOS } from './lib/generator.js'
 import Media, { Thumb } from './components/Media.jsx'
 import CustomMediaField from './components/CustomMediaField.jsx'
 import WorkoutMediaSection, { workoutMediaCount } from './components/WorkoutMedia.jsx'
@@ -235,6 +236,13 @@ function StarterPlanChooser({ close }) {
   }
   return <>
     <h3>{t('Choose starter plan')}</h3>
+    <div className="list" style={{ marginBottom: 10 }}>
+      <div className="item" {...tappable(() => { close(); generatorSheet() })}>
+        <span className="lrow-i" style={{ background: 'var(--surface-3)' }}><Icon name="bolt" /></span>
+        <div className="grow"><div className="tt">{t('Generate a workout')}</div><div className="ss">{t('Answer a few questions and get a workout built for you.')}</div></div>
+        <Icon name="chevronRight" className="chev" />
+      </div>
+    </div>
     {profiles.length > 0
       ? <div className="chips" style={{ margin: '0 0 10px' }}>
           <div className="small dim" style={{ width: '100%' }}>{t('Fit to my equipment')}</div>
@@ -256,6 +264,107 @@ function StarterPlanChooser({ close }) {
 }
 
 export const starterPlanSheet = () => ui().openSheet(close => <StarterPlanChooser close={close} />)
+
+/* ============================ gerador de treino ============================ */
+// Pergunta objetivo, nível, local, tempo e foco (ou dias por semana) e monta o treino com lib/generator.js.
+// As rotinas geradas são rotinas comuns: podem ser editadas, trocadas e apagadas como as demais.
+const G_COPY = {
+  objetivo: { gordura: () => t('Lose fat'), forca: () => t('Build strength'), musculo: () => t('Build muscle') },
+  nivel: { iniciante: () => t('Beginner'), intermediario: () => t('Intermediate'), avancado: () => t('Advanced') },
+  local: { casa: () => t('At home, no equipment'), halteres: () => t('At home, with dumbbells'), academia: () => t('Full gym') },
+  foco: {
+    corpo: () => t('Full body'), superior: () => t('Upper body'), inferior: () => t('Lower body'), empurrar: () => t('Push'), puxar: () => t('Pull'),
+    pernas: () => t('Legs'), abdomen: () => t('Abs'), bracos: () => t('Arms'), ombros: () => t('Shoulders')
+  }
+}
+
+function GeneratorSheet({ close }) {
+  const week = useStore(s => s.S.week)
+  const routines = useStore(s => s.S.routines)
+  const [tipo, setTipo] = useState('hoje')
+  const [objetivo, setObjetivo] = useState('musculo')
+  const [nivel, setNivel] = useState('iniciante')
+  const [local, setLocal] = useState('casa')
+  const [tempo, setTempo] = useState(45)
+  const [foco, setFoco] = useState('corpo')
+  const [dias, setDias] = useState(3)
+  const [semente, setSemente] = useState(1)
+  const [gerado, setGerado] = useState(null)
+
+  const chips = (valores, atual, set, rotulo) => <div className="chips" style={{ margin: '0 0 12px', flexWrap: 'wrap', overflow: 'visible' }}>
+    {valores.map(v => <button key={v} className={'chip nocap' + (atual === v ? ' on' : '')} onClick={() => { set(v); setGerado(null) }}>{rotulo(v)}</button>)}
+  </div>
+  const titulo = texto => <div className="small dim" style={{ margin: '4px 0 6px' }}>{texto}</div>
+
+  const gerar = proxima => {
+    const s = proxima ? semente + 1 : semente
+    if (proxima) setSemente(s)
+    setGerado(tipo === 'hoje'
+      ? { tipo, routines: [gerarTreino({ foco, objetivo, nivel, local, tempo, semente: s })] }
+      : { tipo, ...gerarPlanoSemanal({ dias, objetivo, nivel, local, tempo, semente: s }) })
+  }
+
+  const salvar = () => {
+    const g = gerado
+    if (!g) return
+    close()
+    const aplicar = () => {
+      update(st => {
+        g.routines.forEach(r => st.routines.push(r))
+        if (g.tipo === 'semana') g.schedule.forEach(({ day, routineId }) => { st.week[day] = [routineId] })
+      })
+      toast(g.tipo === 'hoje' ? t('Workout saved: {0}', g.routines[0].name) : t('Plan saved: {0}', t('{0} days per week', g.schedule.length)))
+      if (g.tipo === 'hoje') nav('/workout')
+    }
+    const dayIds = g.tipo === 'semana' ? g.schedule.map(x => x.day) : []
+    const ocupado = day => [].concat(week[day] || []).some(id => routines.some(r => r.id === id))
+    if (!dayIds.some(ocupado)) { aplicar(); return }
+    confirmSheet({
+      title: t('Save this plan?'),
+      message: t('The new plan goes on {0}. Your existing routines stay; only those days of the weekly plan change.', dayList(dayIds)),
+      confirmText: t('Save plan'),
+      onConfirm: aplicar
+    })
+  }
+
+  const nomeEx = id => exerciseNameFor(EXIDX[id])
+  const preco = e => EXIDX[e.id]?.hd ? `${e.sets} × ${e.reps} s` : `${e.sets} × ${e.reps}`
+
+  return <>
+    <h3>{t('Generate a workout')}</h3>
+    {chips(['hoje', 'semana'], tipo, setTipo, v => v === 'hoje' ? t('Today’s workout') : t('Weekly plan'))}
+    {titulo(t('Goal'))}
+    {chips(G_OBJETIVOS, objetivo, setObjetivo, v => G_COPY.objetivo[v]())}
+    {titulo(t('Level'))}
+    {chips(G_NIVEIS, nivel, setNivel, v => G_COPY.nivel[v]())}
+    {titulo(t('Where do you train?'))}
+    {chips(G_LOCAIS, local, setLocal, v => G_COPY.local[v]())}
+    {titulo(t('Time'))}
+    {chips(G_TEMPOS, tempo, setTempo, v => t('{0} min', v))}
+    {tipo === 'hoje'
+      ? <>{titulo(t('Focus'))}{chips(G_FOCOS, foco, setFoco, v => G_COPY.foco[v]())}</>
+      : <>{titulo(t('Days per week'))}{chips([2, 3, 4, 5, 6], dias, setDias, v => String(v))}</>}
+    <Button variant="primary" icon="bolt" onClick={() => gerar(false)}>{gerado ? t('Generate') : t('Generate')}</Button>
+    {gerado && <div style={{ marginTop: 14 }}>
+      {gerado.routines.map(r => {
+        const rs = resumoTreino(r)
+        return <div key={r.id} className="card" style={{ marginBottom: 10 }}>
+          <div className="tt">{r.name}</div>
+          <div className="small dim" style={{ margin: '2px 0 8px' }}>{t('{0} exercises · {1} sets · about {2} min', rs.exercicios, rs.series, rs.minutos)}</div>
+          {r.ex.map(e => <div key={e.id} className="row" style={{ justifyContent: 'space-between', padding: '3px 0' }}>
+            <span>{nomeEx(e.id)}</span><span className="dim small">{preco(e)}</span>
+          </div>)}
+        </div>
+      })}
+      <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+        <Button icon="shuffle" onClick={() => gerar(true)}>{t('Generate again')}</Button>
+        <Button variant="primary" icon="check" onClick={salvar}>{gerado.tipo === 'hoje' ? t('Save workout') : t('Save plan')}</Button>
+      </div>
+    </div>}
+  </>
+}
+
+export const generatorSheet = () => ui().openSheet(close => <GeneratorSheet close={close} />)
 
 /* ============================ weight picker (shared: body weight + goal) ============================ */
 // Fixed range, not a moving window — a window that resizes itself mid-drag (the previous
