@@ -1,25 +1,19 @@
-// Configuração do histórico na planilha "treino" do Google Drive (lib/planilha.js).
+// Histórico na planilha "treino" do Google Drive (lib/planilha.js): a aba vem do e-mail do login com o Google.
 import { useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
-import { lerConfig, gravarConfig, configurada, enviar } from '../lib/planilha.js'
+import { lerSessao } from '../lib/acesso.js'
+import { enviar } from '../lib/planilha.js'
 import { Button } from './ui.jsx'
 
 export function PlanilhaSheet({ close }) {
   const toast = useUI(s => s.toast)
-  const [c, setC] = useState(lerConfig)
   const [busy, setBusy] = useState(false)
-  const campo = (k, rotulo, extra = {}) => <label style={{ display: 'block', marginBottom: 10 }}>
-    <div className="small dim" style={{ marginBottom: 4 }}>{rotulo}</div>
-    <input className="timef" style={{ width: '100%' }} value={c[k]} onChange={e => setC({ ...c, [k]: e.target.value })}
-      autoCapitalize="off" autoCorrect="off" spellCheck={false} {...extra} />
-  </label>
-  const salvar = async () => {
-    gravarConfig(c)
-    if (!configurada(c)) { toast?.(t('Turned off')); close(); return }
+  const sessao = lerSessao()
+  const agora = async () => {
     setBusy(true)
-    try { await enviar(useStore.getState().S, c); toast?.(t('History sent to the spreadsheet')); close() }
+    try { await enviar(useStore.getState().S, sessao); toast?.(t('History sent to the spreadsheet')); close() }
     catch { toast?.(t('Could not send to the spreadsheet')) }
     setBusy(false)
   }
@@ -28,11 +22,11 @@ export function PlanilhaSheet({ close }) {
     <div className="muted small" style={{ marginBottom: 12 }}>
       {t('Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.')}
     </div>
-    {campo('url', t('Script address'), { inputMode: 'url', placeholder: 'https://script.google.com/macros/s/…/exec' })}
-    {campo('token', t('Secret code'), { type: 'password' })}
-    {campo('aba', t('Tab (person name)'), { placeholder: 'Fernando' })}
-    <Button variant="primary" disabled={busy} onClick={salvar}>{t('Save and send now')}</Button>
-    <div className="small dim" style={{ margin: '8px 2px 0' }}>{t('Leave the address empty to turn it off.')}</div>
+    {sessao && <div className="small" style={{ marginBottom: 14 }}>
+      <div className="small dim">{t('Tab (person name)')}</div>
+      <div>{sessao.aba} · {sessao.email}</div>
+    </div>}
+    <Button variant="primary" disabled={busy || !sessao} onClick={agora}>{t('Send now')}</Button>
   </>
 }
 

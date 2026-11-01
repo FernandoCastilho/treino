@@ -32,13 +32,10 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
-      - name: Teste da tela de senha
+      - name: Teste da tela de entrada
         run: npx vitest run src/lib/gate.test.js
       - name: Build
         run: npm run build:pages
-        env:
-          # Hash da senha (variável do repositório, não é segredo: o hash vai no site de qualquer jeito).
-          VITE_SENHA_HASH: ${{ vars.SENHA_HASH }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist

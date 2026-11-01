@@ -494,7 +494,7 @@ export default {
   // --- data terms: equipment ---
   'Finish': 'เสร็จสิ้น',
   'Start {0}': 'เริ่ม {0}',
-  'Leave guest mode': 'Leave guest mode',
+  'Send now': 'Send now',
   'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'โหมดผู้เยี่ยมชม: ข้อมูลของคุณอยู่ในเบราว์เซอร์นี้เท่านั้น',
   'Keeps your data safe and separate per person.': 'เก็บข้อมูลของคุณให้ปลอดภัยและแยกตามแต่ละคน',
@@ -2638,12 +2638,7 @@ export default {
   'Google Sheets spreadsheet': 'Google Sheets spreadsheet',
   'History on your own tab': 'History on your own tab',
   'Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.': 'Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.',
-  'Script address': 'Script address',
-  'Secret code': 'Secret code',
   'Tab (person name)': 'Tab (person name)',
-  'Save and send now': 'Save and send now',
-  'Leave the address empty to turn it off.': 'Leave the address empty to turn it off.',
   'History sent to the spreadsheet': 'History sent to the spreadsheet',
   'Could not send to the spreadsheet': 'Could not send to the spreadsheet',
-  'Turned off': 'Turned off',
 }

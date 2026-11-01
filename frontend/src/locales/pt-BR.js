@@ -327,7 +327,7 @@ export const PT_BR_OVERRIDES = {
   'Superset': 'Superset',
   'Superset {0} / {1}': 'Superset {0} / {1}',
   'Superset with exercise above': 'Superset com o exercício acima',
-  'Leave guest mode': 'Sair do modo visitante',
+  'Send now': 'Enviar agora',
   'Back to the start screen. Your data stays on this device.': 'Voltar à tela inicial. Seus dados continuam neste aparelho.',
   'Guest mode: your data lives only in this browser.': 'Modo visitante: seus dados ficam só neste navegador.',
   'Sign in with passkey': 'Entrar com chave de acesso',
@@ -1709,14 +1709,9 @@ export const PT_BR_OVERRIDES = {
   'Google Sheets spreadsheet': 'Planilha do Google Sheets',
   'History on your own tab': 'Histórico na sua aba',
   'Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.': 'Envia o seu histórico de treinos para a planilha "treino", na sua aba. É reenviado sozinho depois de cada treino.',
-  'Script address': 'Endereço do script',
-  'Secret code': 'Código secreto',
   'Tab (person name)': 'Aba (nome da pessoa)',
-  'Save and send now': 'Salvar e enviar agora',
-  'Leave the address empty to turn it off.': 'Deixe o endereço vazio para desligar.',
   'History sent to the spreadsheet': 'Histórico enviado para a planilha',
   'Could not send to the spreadsheet': 'Não foi possível enviar para a planilha',
-  'Turned off': 'Desligado',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

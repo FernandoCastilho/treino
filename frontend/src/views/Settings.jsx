@@ -58,6 +58,7 @@ import WatchSettingsPage from './WatchSettings.jsx'
 import { reportSheet } from '../components/ReportSheet.jsx'
 import { csvExportSheet } from '../components/CsvExportSheet.jsx'
 import { planilhaSheet } from '../components/PlanilhaSheet.jsx'
+import { sair } from '../lib/acesso.js'
 import GymReminderPage, { GymEditPage } from './GymReminder.jsx'
 import { readGymConfig } from '../lib/gym-reminder.js'
 import { THEMES, inSeason, seasonChoice, activeSeason } from '../lib/seasonal.js'
@@ -1019,7 +1020,10 @@ export default function Settings({ page = null, find = null, via = null, entryKe
       {/* A local-only phone has no account to hand another device a code for (#551). */}
       {!(MOBILE && user) && <Section title={MOBILE ? t('Your data') : DEMO ? t('Demo') : t('Account')}
         footer={MOBILE ? t('Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.') : null}>
-        {MOBILE ? <>
+        {!user && !MOBILE && !DEMO && guest ? <>
+          {/* Entrada é pelo Google (lib/gate.js): sair apaga a sessão deste aparelho; os dados continuam aqui. */}
+          <Row icon="signOut" iconTint="var(--red)" title={t('Sign out')} subtitle={t('Back to the start screen. Your data stays on this device.')} accessory="chevron" onClick={() => { sair(); location.hash = '#/home'; location.reload() }} />
+        </> : MOBILE ? <>
           <Row icon="lock" iconTint="var(--acc)" title={t('All data stays on this phone')} subtitle={t('No account, no cloud. Back it up anytime in Data & backup.')} />
           <Row icon="cloud" iconTint="var(--indigo)" title={t('Connect to my server')} subtitle={t('Sync this device to your own self-hosted openGym instead.')} accessory="chevron"
             onClick={connectServer} />
@@ -1057,8 +1061,6 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           <Row icon="lock" iconTint="var(--grey)" title={t('Passkeys not supported in this browser.')} />
           <KeptChangesRows />
         </>}
-        {/* A guest chose to skip the sign-in screen and had no way back to it. The copy on this device stays. */}
-        {!user && !MOBILE && !DEMO && guest && <Row icon="signOut" iconTint="var(--red)" title={t('Leave guest mode')} subtitle={t('Back to the start screen. Your data stays on this device.')} accessory="chevron" onClick={() => { useStore.getState().setGuest(false); nav('/home') }} />}
       </Section>}
       {/* Signed in or paired: the account can be deleted from here (App Store rule 5.1.1(v)). A
           phone in local-only mode has no account; "Reset everything" in Data & backup wipes it. */}

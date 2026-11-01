@@ -1,89 +1,64 @@
-// Tela de senha do Treino. Barreira simples, não segurança forte: o site é público e o código é aberto.
-// O hash (PBKDF2-SHA256) vem do build em VITE_SENHA_HASH, no formato "iteracoes:salt:hash" em hex.
-// Sem hash configurado, o app fica fechado.
-const KEY = 'treino_acesso'
+// Tela de entrada do FC Gym: "Entrar com o Google", só para os e-mails da família (lib/acesso.js).
+// Barreira da tela, não segurança forte: o site é público e o código é aberto. O que protege a planilha é
+// o Apps Script, que só aceita sessões assinadas por ele.
+import { CLIENT_ID, entrar, lerSessao } from './acesso.js'
 
-const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('')
-const bytes = (h) => new Uint8Array(h.match(/../g).map(x => parseInt(x, 16)))
-
-export async function derivar(senha, saltHex, iteracoes) {
-  const chave = await crypto.subtle.importKey('raw', new TextEncoder().encode(senha), 'PBKDF2', false, ['deriveBits'])
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: bytes(saltHex), iterations: iteracoes }, chave, 256)
-  return hex(bits)
-}
-
-export async function confere(senha, config) {
-  const [it, salt, hash] = String(config || '').split(':')
-  const iteracoes = Number(it)
-  if (!iteracoes || !salt || !hash) return false
-  return (await derivar(senha, salt, iteracoes)) === hash
-}
-
-const lembrado = (config) => {
-  try { return localStorage.getItem(KEY) === config } catch { return false }
-}
-const lembrar = (config) => {
-  try { localStorage.setItem(KEY, config) } catch { /* sem armazenamento: pede de novo na próxima */ }
-}
-
-function tela(config) {
-  return new Promise((resolve) => {
-    const raiz = document.createElement('div')
-    raiz.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#060d1f;color:#fff;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px'
-    const caixa = document.createElement('form')
-    caixa.style.cssText = 'width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;text-align:center'
-    const titulo = document.createElement('h1')
-    titulo.textContent = 'FC Gym'
-    titulo.style.cssText = 'margin:0 0 4px;font-size:28px;color:#ffd60a'
-    const aviso = document.createElement('p')
-    aviso.style.cssText = 'margin:0;min-height:20px;font-size:14px;color:#aaa'
-    caixa.append(titulo, aviso)
-
-    if (!config) {
-      aviso.textContent = 'Acesso ainda não configurado.'
-      raiz.append(caixa)
-      document.body.append(raiz)
-      return
-    }
-
-    aviso.textContent = 'Digite a senha para entrar.'
-    const campo = document.createElement('input')
-    campo.type = 'password'
-    campo.autocomplete = 'current-password'
-    campo.setAttribute('aria-label', 'Senha')
-    campo.style.cssText = 'font-size:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#101d3d;color:#fff'
-    const botao = document.createElement('button')
-    botao.type = 'submit'
-    botao.textContent = 'Entrar'
-    botao.style.cssText = 'font-size:16px;padding:12px;border-radius:10px;border:0;background:#ffd60a;color:#000;font-weight:600'
-    caixa.append(campo, botao)
-    caixa.addEventListener('submit', async (e) => {
-      e.preventDefault()
-      botao.disabled = true
-      aviso.textContent = 'Conferindo…'
-      let ok = false
-      try { ok = await confere(campo.value, config) } catch { ok = false }
-      if (ok) {
-        lembrar(config)
-        raiz.remove()
-        resolve()
-      } else {
-        aviso.textContent = 'Senha incorreta.'
-        campo.value = ''
-        botao.disabled = false
-        campo.focus()
-      }
-    })
-    raiz.append(caixa)
-    document.body.append(raiz)
-    campo.focus()
+function carregarGoogle() {
+  return new Promise((resolve, reject) => {
+    if (window.google?.accounts?.id) return resolve()
+    const s = document.createElement('script')
+    s.src = 'https://accounts.google.com/gsi/client'
+    s.async = true
+    s.onload = () => resolve()
+    s.onerror = () => reject(new Error('gsi'))
+    document.head.append(s)
   })
 }
 
-// Resolve quando o acesso está liberado. Sem hash configurado, nunca resolve.
-export async function passarPelaSenha(config = import.meta.env.VITE_SENHA_HASH) {
-  if (config && lembrado(config)) return
+function tela() {
+  return new Promise((resolve) => {
+    const raiz = document.createElement('div')
+    raiz.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#060d1f;color:#fff;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px'
+    const caixa = document.createElement('div')
+    caixa.style.cssText = 'width:100%;max-width:320px;display:flex;flex-direction:column;gap:14px;text-align:center;align-items:center'
+    const titulo = document.createElement('h1')
+    titulo.textContent = 'FC Gym'
+    titulo.style.cssText = 'margin:0;font-size:28px;color:#ffd60a'
+    const sub = document.createElement('p')
+    sub.textContent = 'Seus treinos. Seus pesos.'
+    sub.style.cssText = 'margin:0 0 6px;font-size:14px;color:#8a93ab'
+    const botao = document.createElement('div')
+    const aviso = document.createElement('p')
+    aviso.style.cssText = 'margin:0;min-height:20px;font-size:14px;color:#aaa'
+    caixa.append(titulo, sub, botao, aviso)
+    raiz.append(caixa)
+    document.body.append(raiz)
+
+    carregarGoogle().then(() => {
+      window.google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: async ({ credential }) => {
+          aviso.style.color = '#aaa'
+          aviso.textContent = 'Conferindo…'
+          try {
+            await entrar(credential)
+            raiz.remove()
+            resolve()
+          } catch (e) {
+            aviso.style.color = '#ff8a80'
+            aviso.textContent = e.message
+          }
+        },
+      })
+      window.google.accounts.id.renderButton(botao, { theme: 'filled_blue', size: 'large', text: 'signin_with', locale: 'pt-BR', width: 280 })
+    }).catch(() => { aviso.textContent = 'Não consegui carregar o login do Google. Verifique a internet e recarregue.' })
+  })
+}
+
+// Resolve quando o acesso está liberado (sessão guardada e ainda válida, ou login feito agora).
+export async function passarPeloLogin() {
+  if (lerSessao()) return
   const boot = document.getElementById('boot')
   if (boot) boot.remove()
-  await tela(config)
+  await tela()
 }

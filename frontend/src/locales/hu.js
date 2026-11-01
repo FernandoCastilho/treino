@@ -494,7 +494,7 @@ export default {
   // --- data terms: equipment ---
   'Finish': 'Befejezés',
   'Start {0}': '{0} indítása',
-  'Leave guest mode': 'Leave guest mode',
+  'Send now': 'Send now',
   'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'Vendég mód: az adataid csak ebben a böngészőben élnek.',
   'Keeps your data safe and separate per person.': 'Biztonságban és személyenként elkülönítve tartja az adataidat.',
@@ -2630,12 +2630,7 @@ export default {
   'Google Sheets spreadsheet': 'Google Sheets spreadsheet',
   'History on your own tab': 'History on your own tab',
   'Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.': 'Sends your workout history to the "treino" spreadsheet, on your own tab. Sent again automatically after every workout.',
-  'Script address': 'Script address',
-  'Secret code': 'Secret code',
   'Tab (person name)': 'Tab (person name)',
-  'Save and send now': 'Save and send now',
-  'Leave the address empty to turn it off.': 'Leave the address empty to turn it off.',
   'History sent to the spreadsheet': 'History sent to the spreadsheet',
   'Could not send to the spreadsheet': 'Could not send to the spreadsheet',
-  'Turned off': 'Turned off',
 }

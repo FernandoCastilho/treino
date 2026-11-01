@@ -1,4 +1,4 @@
-import { passarPelaSenha } from './lib/gate.js'
+import { passarPeloLogin } from './lib/gate.js'
 
-// Só carrega o app depois da senha (ver lib/gate.js).
-passarPelaSenha().then(() => import('./main.jsx'))
+// Só carrega o app depois do login com o Google (ver lib/gate.js).
+passarPeloLogin().then(() => import('./main.jsx'))
