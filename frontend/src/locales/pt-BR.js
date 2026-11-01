@@ -1699,6 +1699,11 @@ export const PT_BR_OVERRIDES = {
   'Where do you train?': 'Onde você treina?',
   'Workout saved: {0}': 'Treino salvo: {0}',
   '{0} exercises · {1} sets · about {2} min': '{0} exercícios · {1} séries · cerca de {2} min',
+  'Automatic: what is missing': 'Automático: o que falta',
+  'Hamstrings and glutes': 'Posteriores da coxa e glúteos',
+  'Last 4 weeks: least trained {0}. Most trained {1}.': 'Últimas 4 semanas: menos treinado: {0}. Mais treinado: {1}.',
+  'No workouts logged in the last 4 weeks yet, so the automatic option starts as a full-body workout.': 'Ainda não há treinos registrados nas últimas 4 semanas, então a opção automática começa com um treino de corpo inteiro.',
+  'Quadriceps': 'Quadríceps',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

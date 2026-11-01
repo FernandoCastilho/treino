@@ -2664,4 +2664,9 @@ export default {
   'Where do you train?': 'Where do you train?',
   'Workout saved: {0}': 'Workout saved: {0}',
   '{0} exercises · {1} sets · about {2} min': '{0} exercises · {1} sets · about {2} min',
+  'Automatic: what is missing': 'Automatic: what is missing',
+  'Hamstrings and glutes': 'Hamstrings and glutes',
+  'Last 4 weeks: least trained {0}. Most trained {1}.': 'Last 4 weeks: least trained {0}. Most trained {1}.',
+  'No workouts logged in the last 4 weeks yet, so the automatic option starts as a full-body workout.': 'No workouts logged in the last 4 weeks yet, so the automatic option starts as a full-body workout.',
+  'Quadriceps': 'Quadriceps',
 }

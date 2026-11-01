@@ -12,7 +12,7 @@ import { beep, vibrate } from './lib/sound.js'
 import { t, tn, dateLocale, instrFor, instrTranslated, descFor, exerciseNameFor, exerciseNameClass, getLang, useLang } from './lib/i18n.js'
 import { nav, closeThenNav, navToWorkout } from './lib/nav.js'
 import { buildStarterPlan, starterPlanDays, starterPlanOptions } from './lib/starter.js'
-import { gerarTreino, gerarPlanoSemanal, resumo as resumoTreino, LOCAIS as G_LOCAIS, OBJETIVOS as G_OBJETIVOS, NIVEIS as G_NIVEIS, FOCOS as G_FOCOS, TEMPOS as G_TEMPOS } from './lib/generator.js'
+import { gerarTreino, gerarPlanoSemanal, analiseHistorico, resumo as resumoTreino, LOCAIS as G_LOCAIS, OBJETIVOS as G_OBJETIVOS, NIVEIS as G_NIVEIS, FOCOS as G_FOCOS, TEMPOS as G_TEMPOS } from './lib/generator.js'
 import Media, { Thumb } from './components/Media.jsx'
 import CustomMediaField from './components/CustomMediaField.jsx'
 import WorkoutMediaSection, { workoutMediaCount } from './components/WorkoutMedia.jsx'
@@ -34,7 +34,7 @@ import BodyMap from './components/BodyMap.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
-import { exerciseMuscleSnapshot, loadOfWorkouts, MUSCLES, MUSCLE_NAME, muscleWeightsOf, muscleGroupsOf, hasExplicitMuscleMetadata, inMuscleOrder } from './lib/muscles.js'
+import { exerciseMuscleSnapshot, loadOfWorkouts, muscleBalanceWindow, MUSCLES, MUSCLE_NAME, muscleWeightsOf, muscleGroupsOf, hasExplicitMuscleMetadata, inMuscleOrder } from './lib/muscles.js'
 import { parseImport, mergeImport } from './lib/import-csv.js'
 import { importHevyData, HevyApiError, HEVY_DEV_SETTINGS, mergeHevyRoutines, hevySummaryCounts } from './lib/import-hevy.js'
 import { buildPlanBundle, parsePlan, mergePlan, printPlan, planPrintHTML } from './lib/plan-share.js'
@@ -272,8 +272,12 @@ const G_COPY = {
   objetivo: { gordura: () => t('Lose fat'), forca: () => t('Build strength'), musculo: () => t('Build muscle') },
   nivel: { iniciante: () => t('Beginner'), intermediario: () => t('Intermediate'), avancado: () => t('Advanced') },
   local: { casa: () => t('At home, no equipment'), halteres: () => t('At home, with dumbbells'), academia: () => t('Full gym') },
+  grupo: {
+    peito: () => t('Chest'), costas: () => t('Back muscles'), ombros: () => t('Shoulders'), biceps: () => t('Biceps'), triceps: () => t('Triceps'),
+    quads: () => t('Quadriceps'), post: () => t('Hamstrings and glutes'), pant: () => t('Calves'), abd: () => t('Abs')
+  },
   foco: {
-    corpo: () => t('Full body'), superior: () => t('Upper body'), inferior: () => t('Lower body'), empurrar: () => t('Push'), puxar: () => t('Pull'),
+    auto: () => t('Automatic: what is missing'), corpo: () => t('Full body'), superior: () => t('Upper body'), inferior: () => t('Lower body'), empurrar: () => t('Push'), puxar: () => t('Pull'),
     pernas: () => t('Legs'), abdomen: () => t('Abs'), bracos: () => t('Arms'), ombros: () => t('Shoulders')
   }
 }
@@ -286,10 +290,15 @@ function GeneratorSheet({ close }) {
   const [nivel, setNivel] = useState('iniciante')
   const [local, setLocal] = useState('casa')
   const [tempo, setTempo] = useState(45)
-  const [foco, setFoco] = useState('corpo')
+  const [foco, setFoco] = useState('auto')
   const [dias, setDias] = useState(3)
   const [semente, setSemente] = useState(1)
   const [gerado, setGerado] = useState(null)
+  // O que você treinou nas últimas 4 semanas: o gerador prioriza o que está faltando e poupa o que está em excesso.
+  const workouts = useStore(s => s.S.workouts)
+  const historico = useMemo(() => loadOfWorkouts(muscleBalanceWindow(workouts, 28)), [workouts])
+  const analise = useMemo(() => analiseHistorico(historico), [historico])
+  const lista = gs => new Intl.ListFormat(dateLocale()).format(gs.map(g => G_COPY.grupo[g]()))
 
   const chips = (valores, atual, set, rotulo) => <div className="chips" style={{ margin: '0 0 12px', flexWrap: 'wrap', overflow: 'visible' }}>
     {valores.map(v => <button key={v} className={'chip nocap' + (atual === v ? ' on' : '')} onClick={() => { set(v); setGerado(null) }}>{rotulo(v)}</button>)}
@@ -300,8 +309,8 @@ function GeneratorSheet({ close }) {
     const s = proxima ? semente + 1 : semente
     if (proxima) setSemente(s)
     setGerado(tipo === 'hoje'
-      ? { tipo, routines: [gerarTreino({ foco, objetivo, nivel, local, tempo, semente: s })] }
-      : { tipo, ...gerarPlanoSemanal({ dias, objetivo, nivel, local, tempo, semente: s }) })
+      ? { tipo, routines: [gerarTreino({ foco, objetivo, nivel, local, tempo, semente: s, historico })] }
+      : { tipo, ...gerarPlanoSemanal({ dias, objetivo, nivel, local, tempo, semente: s, historico }) })
   }
 
   const salvar = () => {
@@ -341,6 +350,9 @@ function GeneratorSheet({ close }) {
     {chips(G_LOCAIS, local, setLocal, v => G_COPY.local[v]())}
     {titulo(t('Time'))}
     {chips(G_TEMPOS, tempo, setTempo, v => t('{0} min', v))}
+    {analise.temHistorico
+      ? <div className="small dim" style={{ margin: '0 0 10px' }}>{t('Last 4 weeks: least trained {0}. Most trained {1}.', lista(analise.menos), analise.mais.length ? lista(analise.mais) : '—')}</div>
+      : <div className="small dim" style={{ margin: '0 0 10px' }}>{t('No workouts logged in the last 4 weeks yet, so the automatic option starts as a full-body workout.')}</div>}
     {tipo === 'hoje'
       ? <>{titulo(t('Focus'))}{chips(G_FOCOS, foco, setFoco, v => G_COPY.foco[v]())}</>
       : <>{titulo(t('Days per week'))}{chips([2, 3, 4, 5, 6], dias, setDias, v => String(v))}</>}

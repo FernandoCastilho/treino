@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { EXIDX } from './exercises.js'
-import { DIAS, FOCOS, LOCAIS, NIVEIS, OBJETIVOS, POOLS, TEMPOS, gerarPlanoSemanal, gerarTreino, prescricao, quantosExercicios, resumo } from './generator.js'
+import { DIAS, FOCOS, analiseHistorico, LOCAIS, NIVEIS, OBJETIVOS, POOLS, TEMPOS, gerarPlanoSemanal, gerarTreino, prescricao, quantosExercicios, resumo } from './generator.js'
 
 describe('listas do gerador', () => {
   it('todo exercício existe no app', () => {
@@ -98,5 +98,42 @@ describe('gerarPlanoSemanal', () => {
 describe('resumo', () => {
   it('conta exercícios, séries e minutos', () => {
     expect(resumo({ ex: [{ sets: 3 }, { sets: 4 }] })).toEqual({ exercicios: 2, series: 7, minutos: 15 })
+  })
+})
+
+describe('histórico de treino', () => {
+  const peitoPesado = { chest: 40, deltoids: 12, triceps: 10 }
+  it('sem histórico, o foco automático vira corpo inteiro', () => {
+    const a = gerarTreino({ foco: 'auto', local: 'academia', historico: null, semente: 2 })
+    const b = gerarTreino({ foco: 'corpo', local: 'academia', semente: 2 })
+    expect(a.ex.map(e => e.id)).toEqual(b.ex.map(e => e.id))
+  })
+
+  it('analisa o que falta e o que está em excesso', () => {
+    const an = analiseHistorico(peitoPesado)
+    expect(an.temHistorico).toBe(true)
+    expect(an.mais[0]).toBe('peito')
+    expect(an.menos).not.toContain('peito')
+    expect(analiseHistorico({}).temHistorico).toBe(false)
+  })
+
+  it('automático poupa o que está em excesso e prioriza o que falta', () => {
+    const t = gerarTreino({ foco: 'auto', local: 'academia', tempo: 45, historico: peitoPesado, semente: 1 })
+    const alvos = t.ex.map(e => EXIDX[e.id].tg)
+    expect(alvos).not.toContain('pectorals')
+    // pernas e costas nunca foram treinadas: aparecem
+    expect(t.ex.some(e => ['quads', 'glutes', 'hamstrings'].includes(EXIDX[e.id].tg))).toBe(true)
+    expect(t.name).toBe('Treino gerado · O que falta')
+  })
+
+  it('dentro de um foco, começa pelo que está menos treinado', () => {
+    const t = gerarTreino({ foco: 'superior', local: 'academia', historico: { chest: 50, deltoids: 30, biceps: 20, triceps: 20, 'upper-back': 1 }, semente: 1 })
+    expect(['lats', 'upper back', 'spine']).toContain(EXIDX[t.ex[0].id].tg)
+  })
+
+  it('o plano da semana também usa o histórico sem quebrar', () => {
+    const p = gerarPlanoSemanal({ dias: 4, local: 'academia', historico: peitoPesado, semente: 2 })
+    expect(p.routines).toHaveLength(4)
+    for (const r of p.routines) expect(r.ex.length).toBeGreaterThan(2)
   })
 })

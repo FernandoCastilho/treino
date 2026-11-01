@@ -8,7 +8,7 @@ import { EXIDX, isHold } from './exercises.js'
 export const LOCAIS = ['casa', 'halteres', 'academia']
 export const OBJETIVOS = ['gordura', 'forca', 'musculo']
 export const NIVEIS = ['iniciante', 'intermediario', 'avancado']
-export const FOCOS = ['corpo', 'superior', 'inferior', 'empurrar', 'puxar', 'pernas', 'abdomen', 'bracos', 'ombros']
+export const FOCOS = ['auto', 'corpo', 'superior', 'inferior', 'empurrar', 'puxar', 'pernas', 'abdomen', 'bracos', 'ombros']
 export const TEMPOS = [30, 45, 60]
 
 // Cada item: [id do exercício, nível mínimo (0 iniciante, 1 intermediário, 2 avançado)].
@@ -77,6 +77,34 @@ const FOCO_GRUPOS = {
   abdomen: ['abd'],
   bracos: ['biceps', 'triceps'],
   ombros: ['ombros']
+}
+
+// Que músculos do mapa (lib/muscles.js) pertencem a cada grupo do gerador. Serve para ler o histórico:
+// quanto cada grupo foi treinado nas últimas semanas.
+export const GRUPO_MUSCULOS = {
+  peito: ['chest'], costas: ['upper-back', 'lower-back'], ombros: ['deltoids'], biceps: ['biceps'], triceps: ['triceps'],
+  quads: ['quadriceps'], post: ['hamstring', 'gluteal'], pant: ['calves'], abd: ['abs', 'obliques']
+}
+const ORDEM_GRUPOS = Object.keys(GRUPO_MUSCULOS)
+
+/** Carga por grupo (séries efetivas por músculo, em média) a partir da carga por músculo de lib/muscles.js. */
+export const cargaGrupos = carga => Object.fromEntries(Object.entries(GRUPO_MUSCULOS)
+  .map(([g, ms]) => [g, ms.reduce((t, m) => t + (carga?.[m] || 0), 0) / ms.length]))
+
+/** O que o histórico diz: grupos menos treinados (faltando) e mais treinados (em excesso). */
+export function analiseHistorico(carga) {
+  const c = cargaGrupos(carga)
+  const total = Object.values(c).reduce((a, b) => a + b, 0)
+  if (!(total > 0)) return { temHistorico: false, menos: [], mais: [], carga: c }
+  const ordem = [...ORDEM_GRUPOS].sort((a, b) => c[a] - c[b] || ORDEM_GRUPOS.indexOf(a) - ORDEM_GRUPOS.indexOf(b))
+  return { temHistorico: true, menos: ordem.slice(0, 3), mais: ordem.slice(-2).reverse().filter(g => c[g] > 0), carga: c }
+}
+
+// Reordena os grupos de um foco: o que está menos treinado vem primeiro.
+const priorizar = (grupos, carga) => {
+  if (!carga) return grupos
+  const c = cargaGrupos(carga)
+  return [...grupos].sort((a, b) => c[a] - c[b])
 }
 
 const EMOJI = { corpo: 'figureStrength', superior: 'barbell', inferior: 'legs', empurrar: 'barbell', puxar: 'pullup', pernas: 'legs', abdomen: 'figureStrength', bracos: 'barbell', ombros: 'barbell' }
@@ -151,8 +179,17 @@ function escolher({ grupos, quantos, local, nivel, rand, evitar = new Set() }) {
 const montar = (ids, opts) => ids.map(id => ({ id, ...prescricao(id, opts), weight: 0 }))
 
 /** Um treino. `semente` muda as variações ("gerar de novo"). Devolve uma rotina pronta para o app. */
-export function gerarTreino({ foco = 'corpo', objetivo = 'musculo', nivel = 'iniciante', local = 'casa', tempo = 45, semente = 1 } = {}) {
-  const grupos = FOCO_GRUPOS[foco] || FOCO_GRUPOS.corpo
+export function gerarTreino({ foco = 'corpo', objetivo = 'musculo', nivel = 'iniciante', local = 'casa', tempo = 45, semente = 1, historico = null } = {}) {
+  let grupos = FOCO_GRUPOS[foco] || FOCO_GRUPOS.corpo
+  if (foco === 'auto') {
+    // "O que falta": os grupos menos treinados nas últimas semanas, sem os mais treinados. Sem histórico, corpo inteiro.
+    const a = analiseHistorico(historico)
+    if (a.temHistorico) {
+      const quantos = Math.max(2, Math.ceil(quantosExercicios(tempo) / 1.5))
+      const ordem = [...ORDEM_GRUPOS].sort((x, y) => a.carga[x] - a.carga[y] || ORDEM_GRUPOS.indexOf(x) - ORDEM_GRUPOS.indexOf(y))
+      grupos = ordem.filter(g => !a.mais.includes(g)).slice(0, quantos)
+    } else grupos = FOCO_GRUPOS.corpo
+  } else grupos = priorizar(grupos, historico)
   const rand = rng(semente * 9973 + 17)
   let ids = escolher({ grupos, quantos: quantosExercicios(tempo), local, nivel, rand })
   // Perder gordura: troca o último exercício por um de cardio, quando houver espaço.
@@ -164,7 +201,7 @@ export function gerarTreino({ foco = 'corpo', objetivo = 'musculo', nivel = 'ini
 }
 
 export const nomeDoTreino = foco => ({
-  corpo: 'Treino gerado · Corpo inteiro', superior: 'Treino gerado · Parte superior', inferior: 'Treino gerado · Parte inferior',
+  auto: 'Treino gerado · O que falta', corpo: 'Treino gerado · Corpo inteiro', superior: 'Treino gerado · Parte superior', inferior: 'Treino gerado · Parte inferior',
   empurrar: 'Treino gerado · Empurrar', puxar: 'Treino gerado · Puxar', pernas: 'Treino gerado · Pernas',
   abdomen: 'Treino gerado · Abdômen', bracos: 'Treino gerado · Braços', ombros: 'Treino gerado · Ombros'
 }[foco] || 'Treino gerado')
@@ -182,12 +219,12 @@ const DIVISAO = {
 }
 
 /** Um plano da semana. Devolve { routines, schedule } como buildStarterPlan: schedule = [{ day, routineId }]. */
-export function gerarPlanoSemanal({ dias = 3, objetivo = 'musculo', nivel = 'iniciante', local = 'casa', tempo = 45, semente = 1 } = {}) {
+export function gerarPlanoSemanal({ dias = 3, objetivo = 'musculo', nivel = 'iniciante', local = 'casa', tempo = 45, semente = 1, historico = null } = {}) {
   const n = DIVISAO[dias] ? dias : 3
   const routines = []
   const jaUsados = {}
   DIVISAO[n].forEach(([foco, rotulo], i) => {
-    const grupos = FOCO_GRUPOS[foco]
+    const grupos = priorizar(FOCO_GRUPOS[foco], historico)
     const rand = rng(semente * 7919 + i * 131 + 3)
     // Evita repetir os mesmos exercícios em dias do mesmo foco.
     const evitar = jaUsados[foco] || new Set()
