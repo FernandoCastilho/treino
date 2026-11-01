@@ -491,6 +491,8 @@ export default {
   'full body': 'tüm vücut',
   'Finish': 'Bitir',
   'Start {0}': '{0} başlat',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'Misafir modu: verilerin yalnızca bu tarayıcıda yaşar.',
   'Keeps your data safe and separate per person.': 'Verilerini güvende ve kişi başına ayrı tutar.',
   'Strength': 'Kuvvet',

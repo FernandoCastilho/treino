@@ -509,6 +509,8 @@ export default {
   // --- data terms: equipment ---
   'Finish': 'Beenden',
   'Start {0}': '{0} starten',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'Gastmodus: deine Daten leben nur in diesem Browser.',
   'Keeps your data safe and separate per person.': 'Hält deine Daten sicher und pro Person getrennt.',
   'Strength': 'Kraft',

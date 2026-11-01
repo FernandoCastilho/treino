@@ -494,6 +494,8 @@ export default {
   // --- data terms: equipment ---
   'Finish': 'Befejezés',
   'Start {0}': '{0} indítása',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': 'Vendég mód: az adataid csak ebben a böngészőben élnek.',
   'Keeps your data safe and separate per person.': 'Biztonságban és személyenként elkülönítve tartja az adataidat.',
   'Strength': 'Erő',

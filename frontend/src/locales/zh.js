@@ -491,6 +491,8 @@ export default {
   'full body': '全身',
   'Finish': '结束',
   'Start {0}': '开始 {0}',
+  'Leave guest mode': 'Leave guest mode',
+  'Back to the start screen. Your data stays on this device.': 'Back to the start screen. Your data stays on this device.',
   'Guest mode: your data lives only in this browser.': '访客模式：你的数据只保存在此浏览器中。',
   'Keeps your data safe and separate per person.': '让你的数据安全，并按人分开保存。',
   'Strength': '力量',
