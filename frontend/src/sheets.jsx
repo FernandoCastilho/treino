@@ -178,7 +178,9 @@ const PLAN_COPY = {
   ppl: () => ({ name: t('Push / Pull / Legs'), about: t('Push, pull and legs each get their own day.') }),
   'upper-lower': () => ({ name: t('Upper / Lower'), about: t('Upper body twice, lower body twice.') }),
   'full-body': () => ({ name: t('Full Body'), about: t('Three sessions, the whole body each time.') }),
-  '5x5': () => ({ name: t('5×5'), about: t('Five sets of five on the main barbell lifts.') })
+  '5x5': () => ({ name: t('5×5'), about: t('Five sets of five on the main barbell lifts.') }),
+  'home-beginner': () => ({ name: t('Home: Beginner Calisthenics'), about: t('Three full-body days with no equipment, just your body weight.') }),
+  'home-calisthenics': () => ({ name: t('Home: Calisthenics'), about: t('Four days of push, legs, pull and core, with no weights.') })
 }
 
 // Adds the plan's routines (reusing one you already have under the same name) and puts them on

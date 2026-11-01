@@ -34,13 +34,29 @@ const FIVE_BY_FIVE = [
   ['5x5-c', '5×5 C', 'barbell', [['0739', 5, 5], ['0047', 5, 5], ['1323', 5, 5]]]
 ]
 
+// Treino em casa, sem equipamento: calistenia só com o peso do corpo.
+const HOME_BEGINNER = [
+  ['casa-a', 'Em casa · Corpo todo A', 'figureStrength', [['3211', 3, 8], ['1197', 3, 12], ['2471', 3, 12], ['0463', 3, 30], ['0276', 3, 10]]],
+  ['casa-b', 'Em casa · Corpo todo B', 'figureStrength', [['0662', 3, 8], ['0612', 3, 10], ['3436', 3, 12], ['0814', 3, 10], ['6211', 3, 16]]],
+  ['casa-c', 'Em casa · Corpo todo C', 'figureStrength', [['0514', 3, 10], ['0493', 3, 10], ['0630', 3, 20], ['3018', 3, 15], ['0715', 3, 20]]]
+]
+
+const HOME_CALISTHENICS = [
+  ['cal-empurrar', 'Calistenia · Empurrar', 'barbell', [['0662', 4, 10], ['0283', 3, 8], ['2921', 3, 8], ['0814', 3, 12], ['0279', 3, 8]]],
+  ['cal-pernas', 'Calistenia · Pernas', 'legs', [['1197', 4, 15], ['0612', 3, 12], ['0781', 3, 10], ['2471', 4, 15], ['3018', 4, 20]]],
+  ['cal-puxar', 'Calistenia · Puxar e ombros', 'pullup', [['0499', 4, 8], ['3436', 3, 15], ['1241', 3, 10], ['3905', 2, 20]]],
+  ['cal-core', 'Calistenia · Abdômen e cardio', 'figureStrength', [['1160', 4, 10], ['0630', 3, 30], ['6211', 3, 20], ['0687', 3, 20], ['0463', 3, 45], ['0459', 3, 30]]]
+]
+
 // [weekday, routineKey] — weekday is a DAYN index, so 1 is Monday. Fixed weeks only: every
 // plan repeats the same seven days, which is all the weekly plan model can represent.
 const PLANS = {
   ppl: { routines: PPL, schedule: [[1, 'push'], [3, 'pull'], [5, 'legs']] },
   'upper-lower': { routines: UPPER_LOWER, schedule: [[1, 'upper-a'], [2, 'lower-a'], [4, 'upper-b'], [5, 'lower-b']] },
   'full-body': { routines: FULL_BODY, schedule: [[1, 'fb-a'], [3, 'fb-b'], [5, 'fb-c']] },
-  '5x5': { routines: FIVE_BY_FIVE, schedule: [[1, '5x5-a'], [3, '5x5-b'], [5, '5x5-c']] }
+  '5x5': { routines: FIVE_BY_FIVE, schedule: [[1, '5x5-a'], [3, '5x5-b'], [5, '5x5-c']] },
+  'home-beginner': { routines: HOME_BEGINNER, schedule: [[1, 'casa-a'], [3, 'casa-b'], [5, 'casa-c']] },
+  'home-calisthenics': { routines: HOME_CALISTHENICS, schedule: [[1, 'cal-empurrar'], [2, 'cal-pernas'], [4, 'cal-puxar'], [5, 'cal-core']] }
 }
 
 const build = routines =>

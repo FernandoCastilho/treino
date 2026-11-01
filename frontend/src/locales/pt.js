@@ -2588,4 +2588,8 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Só para este telemóvel. Alguns ecrãs principais demoram um momento a perceber.',
   'The icon could not be changed.': 'Não foi possível mudar o ícone.',
   'Try the Halloween app icon': 'Experimenta o ícone de Halloween da app',
+  'Home: Beginner Calisthenics': 'Em casa: Calistenia para iniciantes',
+  'Three full-body days with no equipment, just your body weight.': 'Três dias de corpo inteiro, sem equipamento, só com o peso do corpo.',
+  'Home: Calisthenics': 'Em casa: Calistenia',
+  'Four days of push, legs, pull and core, with no weights.': 'Quatro dias de empurrar, pernas, puxar e abdômen, sem pesos.',
 }

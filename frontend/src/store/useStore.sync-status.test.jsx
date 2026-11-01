@@ -180,7 +180,7 @@ describe('signing out never loses a change silently', () => {
   it('refuses while a change is owed, says how many, and wipes nothing', async () => {
     owedCopy()
     await new Promise(r => setTimeout(r, 10))
-    useStore.getState().update(s => { s.workouts.push(workout('w2', '2026-09-02')); s.restSec = 60 })
+    useStore.getState().update(s => { s.workouts.push(workout('w2', '2026-09-02')); s.restSec = 75 })
     api.mockReset()
     api.mockRejectedValue(netError())
 

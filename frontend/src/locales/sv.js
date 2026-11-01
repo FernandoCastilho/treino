@@ -2635,4 +2635,8 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Bara för den här telefonen. Vissa hemskärmar behöver en stund på sig att hänga med.',
   'The icon could not be changed.': 'Ikonen gick inte att byta.',
   'Try the Halloween app icon': 'Testa Halloween-appikonen',
+  'Home: Beginner Calisthenics': 'Home: Beginner Calisthenics',
+  'Three full-body days with no equipment, just your body weight.': 'Three full-body days with no equipment, just your body weight.',
+  'Home: Calisthenics': 'Home: Calisthenics',
+  'Four days of push, legs, pull and core, with no weights.': 'Four days of push, legs, pull and core, with no weights.',
 }

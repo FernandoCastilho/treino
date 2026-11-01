@@ -2591,4 +2591,8 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Csak ezen a telefonon. Néhány kezdőképernyőnek kell egy pillanat, mire észreveszi.',
   'The icon could not be changed.': 'Nem sikerült megváltoztatni az ikont.',
   'Try the Halloween app icon': 'Próbáld ki a halloweeni alkalmazásikont',
+  'Home: Beginner Calisthenics': 'Home: Beginner Calisthenics',
+  'Three full-body days with no equipment, just your body weight.': 'Three full-body days with no equipment, just your body weight.',
+  'Home: Calisthenics': 'Home: Calisthenics',
+  'Four days of push, legs, pull and core, with no weights.': 'Four days of push, legs, pull and core, with no weights.',
 }

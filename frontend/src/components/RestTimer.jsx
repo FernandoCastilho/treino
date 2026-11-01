@@ -90,7 +90,7 @@ export default function RestTimer() {
     return () => document.body.classList.remove('resting')
   }, [!!on])
   if (!on) return null
-  const pct = Math.max(0, Math.min(100, (on.left / on.total) * 100))
+  const pct = work?.up ? 100 : Math.max(0, Math.min(100, (on.left / on.total) * 100))
   // The bar shrinks by transform, not width: a width transition lays the page out again on every
   // frame of every rest (~45 layouts a second), a scaled bar is the compositor's alone.
 
@@ -98,7 +98,7 @@ export default function RestTimer() {
     <div id="timer" className="working">
       <div className="bar" aria-hidden="true"><i style={{ transform: `scaleX(${pct / 100})` }} /></div>
       <div className="tclock">
-        <span className="t">{work.left <= 0 && work.overtime ? '+' + clock(-work.left) : clock(work.left)}</span>
+        <span className="t">{work.up ? clock(work.total - work.left) : work.left <= 0 && work.overtime ? '+' + clock(-work.left) : clock(work.left)}</span>
         {work.label && <span className="lbl">{work.label}</span>}
       </div>
       <div className="acts">
