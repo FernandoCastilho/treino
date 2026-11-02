@@ -517,3 +517,29 @@ describe('the restore window under StrictMode', () => {
     vi.useRealTimers()
   })
 })
+
+describe('Modals drawer', () => {
+  const drawer = () => ({ id: 'drawer', locked: false, kind: 'drawer',
+    render: close => React.createElement('button', { id: 'inner', onClick: close }, 'ok') })
+  const tap = id => act(async () => { container.querySelector(id).dispatchEvent(new dom.Event('click', { bubbles: true })) })
+
+  afterEach(() => vi.useRealTimers())
+
+  it('opens as a dialog and leaves with its curtain a beat after the tap', async () => {
+    vi.useFakeTimers()
+    await setSheets([drawer()])
+    expect(container.querySelector('aside.drawer').getAttribute('role')).toBe('dialog')
+    await tap('#inner')
+    expect(container.querySelector('aside.drawer').className).toContain('leaving')
+    expect(mocks.state.sheets).toHaveLength(1)
+    await act(async () => { vi.advanceTimersByTime(300) })
+    expect(mocks.state.sheets).toHaveLength(0)
+  })
+
+  it('closes at once when the system asks to reduce motion', async () => {
+    dom.matchMedia = () => ({ matches: true })
+    await setSheets([drawer()])
+    await tap('#inner')
+    expect(mocks.state.sheets).toHaveLength(0)
+  })
+})

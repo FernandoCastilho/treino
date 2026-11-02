@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { dayPhotosOf } from '../lib/day-photos.js'
@@ -165,6 +165,9 @@ function profileBodyweightKg(S) {
 function MuscleBalance({ S }) {
   const nav = useNavigate()
   const [view, setView] = useState('balance')
+  // The entrance motion (index.css .fx-on) runs when the panel opens and when the view changes, then stays off.
+  const [fx, setFx] = useState(true)
+  useEffect(() => { setFx(true); const id = setTimeout(() => setFx(false), 1200); return () => clearTimeout(id) }, [view])
   const [win, setWin] = useState(7)
   const [weekOffset, setWeekOffset] = useState(0)
   const [hard, setHard] = useState(false)
@@ -222,7 +225,7 @@ function MuscleBalance({ S }) {
   const max = worked.length ? load[worked[0]] : 0
   const sets = m => fmtNum(Math.round((load[m] || 0) * 10) / 10)
   const visibleComparisonMuscles = sel ? [sel] : weeklyExpanded ? comparisonMuscles : comparisonMuscles.slice(0, 4)
-  const comparisonRows = visibleComparisonMuscles.map(muscle => {
+  const comparisonRows = visibleComparisonMuscles.map((muscle, i) => {
     const completed = Math.round((load[muscle] || 0) * 10) / 10
     const target = Math.round((planned[muscle] || 0) * 10) / 10
     const percentage = target > 0 ? Math.round(completed / target * 100) : null
@@ -232,7 +235,7 @@ function MuscleBalance({ S }) {
     const find = sel === muscle && !completed
     return <div className={find ? 'mrow has-find' : 'mrow'} data-muscle-volume={muscle} key={muscle}>
       <span className="nm">{sel === muscle ? <b>{t(MUSCLE_NAME[muscle])}</b> : t(MUSCLE_NAME[muscle])}</span>
-      <span className="bar"><i style={{ width: fill + '%' }} /></span>
+      <span className="bar"><i style={{ width: fill + '%', '--i': Math.min(i, 5) }} /></span>
       <span className="v cmp"
         aria-label={`${t('Completed')} ${completedSets} · ${t('Planned')} ${plannedSets}`}>
         {fmtNum(completed)}/{fmtNum(target)}{percentage == null ? '' : ` · ${percentage}%`}
@@ -265,19 +268,19 @@ function MuscleBalance({ S }) {
       <span className="v">{load[sel] > 0 ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
       {!(load[sel] > 0) && findExercises(sel)}
     </div>}
-    {!sel && completedMuscles.map(m => <div key={m} className="mrow" data-muscle-volume={m}>
+    {!sel && completedMuscles.map((m, i) => <div key={m} className="mrow" data-muscle-volume={m}>
       <span className="nm">{t(MUSCLE_NAME[m])}</span>
-      <span className="bar"><i style={{ width: Math.round(load[m] / max * 100) + '%', background: on ? 'var(--yellow)' : undefined }} /></span>
+      <span className="bar"><i style={{ width: Math.round(load[m] / max * 100) + '%', background: on ? 'var(--yellow)' : undefined, '--i': Math.min(i, 5) }} /></span>
       <span className="v">{t('{0} sets', sets(m))}</span>
     </div>)}
     {weeklyToggle(worked.length)}
     {completionSummary}
   </>
 
-  return <div className="card">
+  return <div className={'card' + (fx ? ' fx-on' : '')}>
     <Segmented className="seg-range" value={view} onChange={setView}
       options={[{ value: 'balance', label: t('Muscle balance') }, { value: 'fatigue', label: t('Fatigue') }, { value: 'strength', label: t('Strength') }]} />
-    {view === 'balance' ? <>
+    <Fragment key={view}>{view === 'balance' ? <>
       <div className="row between" style={{ marginBottom: 8 }}>
         <h2 style={{ margin: 0 }}>{t('Muscle balance')} <span className="dim" style={{ textTransform: 'none', letterSpacing: 0 }}>· {on ? t('by hard sets') : t('by sets worked')}</span></h2>
         {!weekly && rated && <Button size="sm" icon="gauge" style={on ? { color: 'var(--yellow)' } : undefined}
@@ -323,8 +326,8 @@ function MuscleBalance({ S }) {
         <h4 className="sec" style={{ marginTop: 14 }}>{t('Exercises')} · {t(MUSCLE_NAME[sel])}</h4>
         {/* A row quotes the exercise's estimated 1RM, so a tap opens the exercise history
             sheet — the curve behind that number plus the last sessions set by set. */}
-        {muscleExercises.length ? muscleExercises.map(row => (
-          <div key={row.id} className="mrow" style={{ minHeight: 48, alignItems: 'stretch', cursor: 'pointer' }} {...tappable(() => exerciseHistorySheet(row.id))}>
+        {muscleExercises.length ? muscleExercises.map((row, i) => (
+          <div key={row.id} className="mrow" style={{ minHeight: 48, alignItems: 'stretch', cursor: 'pointer' }} {...tappable(() => exerciseHistorySheet(row.id, { kind: 'drawer' }))}>
             <span className="nm" style={{ whiteSpace: 'normal', lineHeight: 1.35, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <span className={EXIDX[row.id] ? exerciseNameClass(EXIDX[row.id]) : undefined}>{row.name}</span>
@@ -336,7 +339,7 @@ function MuscleBalance({ S }) {
             </span>
             {/* Filled by width, like the bars around it, rather than a 'to right' gradient: a block
                 starts at the inline start, so in right-to-left it fills from the right. */}
-            <span className="bar" style={{ alignSelf: 'center' }}><i style={{ width: Math.round(row.decay * 100) + '%' }} /></span>
+            <span className="bar" style={{ alignSelf: 'center' }}><i style={{ width: Math.round(row.decay * 100) + '%', '--i': Math.min(i, 5) }} /></span>
             <span className="v" style={{ alignSelf: 'center' }}>{fmtNum(row.current)} {S.unit}<span className="dim"> · {Math.round(row.decay * 100)}%</span></span>
           </div>
         )) : <div className="muted small">{t('No exercises with an estimated 1RM yet.')}</div>}
@@ -346,18 +349,18 @@ function MuscleBalance({ S }) {
           muscle was last trained. Sets in the last 90 days ride along only when there are
           any — a muscle is on this list precisely because it has not been trained lately, so
           that number alone read as "0 sets" all the way down and told nobody anything. */}
-      {detrained.map(slug => {
+      {detrained.map((slug, i) => {
         const sets90 = Math.round((vol90[slug] || 0) * 10) / 10
         return <div key={slug} className="mrow">
           <span className="nm">{t(MUSCLE_NAME[slug])}</span>
-          <span className="bar"><i style={{ width: Math.round(strength[slug] * 100) + '%' }} /></span>
+          <span className="bar"><i style={{ width: Math.round(strength[slug] * 100) + '%', '--i': Math.min(i, 5) }} /></span>
           <span className="v" style={{ textAlign: 'end' }}>
             {sets90 ? t('{0} sets', fmtNum(sets90)) : strengthHint(slug)}
             {sets90 ? <span className="dim small" style={{ display: 'block', fontWeight: 400 }}>{strengthHint(slug)}</span> : null}
           </span>
         </div>
       })}
-    </>}
+    </>}</Fragment>
   </div>
 }
 

@@ -467,7 +467,7 @@ describe('Stats strength exercise rows', () => {
     await click(row)
     expect(thrown).toEqual([])
     expect(mocks.exerciseHistorySheet).toHaveBeenCalledTimes(1)
-    expect(mocks.exerciseHistorySheet).toHaveBeenCalledWith('0025')
+    expect(mocks.exerciseHistorySheet).toHaveBeenCalledWith('0025', { kind: 'drawer' })
 
     // The keyboard path of tappable() must land in the same place.
     await act(async () => { row.dispatchEvent(new dom.KeyboardEvent('keydown', { key: 'Enter', bubbles: true })) })

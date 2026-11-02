@@ -1589,6 +1589,34 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 }
 :root[data-theme="light"] .sheet{background:var(--bg)}
 @keyframes sheetup{from{transform:translateY(100%)}to{transform:none}}
+/* Drawer: the detail of an indicator opens from the side like a curtain (clip-path), and leaves the same way.
+   The backdrop fades. Only transform/opacity/clip-path move; "reduce motion" (the global rule above) turns it all off. */
+.mback-in{animation:fxfade .25s ease-out}
+.mback-out{animation:fxfade .25s ease-in reverse forwards}
+.drawer{
+  position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(420px,100%);background:var(--bg-el);
+  border-inline-start:var(--hair) solid var(--sep);
+  padding:calc(60px + var(--sat)) 18px calc(20px + var(--sab));
+  overflow-y:auto;overscroll-behavior:contain;
+  animation:drawerin .45s cubic-bezier(.2,.8,.2,1);
+}
+.drawer.leaving{animation:drawerout .3s cubic-bezier(.5,0,.8,.3) forwards}
+.drawer-x{position:absolute;top:calc(10px + var(--sat));inset-inline-end:12px}
+@keyframes drawerin{from{clip-path:inset(0 0 0 100%)}}
+@keyframes drawerout{to{clip-path:inset(0 0 0 100%)}}
+[dir="rtl"] .drawer{animation-name:drawerin-rtl}
+[dir="rtl"] .drawer.leaving{animation-name:drawerout-rtl}
+@keyframes drawerin-rtl{from{clip-path:inset(0 100% 0 0)}}
+@keyframes drawerout-rtl{to{clip-path:inset(0 100% 0 0)}}
+@keyframes fxfade{from{opacity:0}}
+
+/* Statistics: on opening and on switching view (Muscle balance / Fatigue / Strength) the content fades in and its bars
+   grow from zero, one after the other (--i, capped at 5). Never a loop: .fx-on is on for 1.2 s after each switch. */
+.fx-on > :not(.seg-range){animation:fxin .32s ease-out backwards}
+.fx-on .bar i{transform-origin:left;animation:fxbar .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(120ms + var(--i,0) * 70ms)}
+[dir="rtl"] .fx-on .bar i{transform-origin:right}
+@keyframes fxin{from{opacity:0;transform:translateY(8px)}}
+@keyframes fxbar{from{transform:scaleX(0)}}
 .sheet .grab{width:36px;height:5px;border-radius:99px;background:var(--label-4);margin:6px auto 14px}
 .sheet h3{font-size:20px;font-weight:600;letter-spacing:-.021em;margin-bottom:14px}
 .picker-search{
