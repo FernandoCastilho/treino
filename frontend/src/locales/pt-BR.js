@@ -328,6 +328,7 @@ export const PT_BR_OVERRIDES = {
   'Superset {0} / {1}': 'Superset {0} / {1}',
   'Superset with exercise above': 'Superset com o exercício acima',
   'Leave guest mode': 'Sair do modo visitante',
+  'Close': 'Fechar',
   'Back to the start screen. Your data stays on this device.': 'Voltar à tela inicial. Seus dados continuam neste aparelho.',
   'Guest mode: your data lives only in this browser.': 'Modo visitante: seus dados ficam só neste navegador.',
   'Sign in with passkey': 'Entrar com chave de acesso',

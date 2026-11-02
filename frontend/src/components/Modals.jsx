@@ -1,6 +1,8 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useUI } from '../store/useUI.js'
 import { keyboardOpen } from '../lib/viewport-guard.js'
+import { t } from '../lib/i18n.js'
+import Icon from './Icon.jsx'
 
 // Putting the page back after a sheet closes takes up to three goes (see the un-pin below): now,
 // next frame, and once the keyboard's dismiss animation is over. Anything else that wants to
@@ -42,6 +44,38 @@ const drainScrollRestore = close => {
   for (const fn of queue) {
     try { fn() } catch (e) { /* one caller must not keep the others waiting */ }
   }
+}
+
+// A detail opened from an indicator slides in from the side like a curtain (index.css .drawer). It leaves the
+// same way, a beat after the tap: `close` is the animated one, so the sheet's own buttons use it too.
+// With "reduce motion" there is no animation to wait for, so it closes at once.
+function Drawer({ sheet }) {
+  const closeSheet = useUI(s => s.closeSheet)
+  const [leaving, setLeaving] = useState(false)
+  const from = useRef(null)
+  const x = useRef(null)
+  const dismiss = () => {
+    if (leaving) return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { closeSheet(sheet.id); return }
+    setLeaving(true)
+    setTimeout(() => closeSheet(sheet.id), 300)
+  }
+  useEffect(() => {
+    from.current = document.activeElement
+    x.current?.focus()
+    const onKey = e => { if (e.key === 'Escape' && !sheet.locked) dismiss() }
+    document.addEventListener('keydown', onKey)
+    return () => { document.removeEventListener('keydown', onKey); from.current?.focus?.() }
+  }, [])
+  return (
+    <div>
+      <div className={'mback ' + (leaving ? 'mback-out' : 'mback-in')} onClick={() => { if (!sheet.locked) dismiss() }} />
+      <aside className={'drawer' + (leaving ? ' leaving' : '')} role="dialog" aria-modal="true">
+        <button className="iconbtn drawer-x" ref={x} aria-label={t('Close')} onClick={dismiss}><Icon name="xmark" /></button>
+        {sheet.render(dismiss)}
+      </aside>
+    </div>
+  )
 }
 
 // One bottom sheet (or centered dialog) with swipe-to-dismiss.
@@ -126,6 +160,7 @@ function Sheet({ sheet }) {
   // backdrop to tap, no drag to dismiss — the viewer has its own close button, and back closes
   // it like any sheet.
   if (sheet.kind === 'viewer') return <div>{sheet.render(close)}</div>
+  if (sheet.kind === 'drawer') return <Drawer sheet={sheet} />
   if (sheet.kind === 'center') {
     return (
       <div>
@@ -205,7 +240,7 @@ export default function Modals() {
   // lock the page behind any open sheet (iOS-safe)
   useEffect(() => {
     if (!sheets.length) return
-    const onKey = e => { if (e.key === 'Escape') { const top = useUI.getState().sheets[useUI.getState().sheets.length - 1]; if (top && !top.locked) useUI.getState().closeSheet(top.id) } }
+    const onKey = e => { if (e.key === 'Escape') { const top = useUI.getState().sheets[useUI.getState().sheets.length - 1]; if (top && !top.locked && top.kind !== 'drawer') useUI.getState().closeSheet(top.id) } }   // a drawer closes itself, with its curtain
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [sheets.length])

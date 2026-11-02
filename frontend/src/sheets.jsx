@@ -1380,7 +1380,7 @@ function ExerciseHistory({ exId }) {
     </div>
   </>
 }
-export const exerciseHistorySheet = exId => ui().openSheet(close => <ExerciseHistory exId={exId} close={close} />)
+export const exerciseHistorySheet = (exId, opts) => ui().openSheet(close => <ExerciseHistory exId={exId} close={close} />, opts)
 
 /* ============================ add to routine ============================ */
 function AddToRoutine({ ex, close }) {
